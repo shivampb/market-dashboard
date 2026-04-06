@@ -7,7 +7,8 @@ import {
 } from "recharts";
 
 /* ── PALETTE ─────────────────────────────────────── */
-const C = {
+/* ── PALETTES ────────────────────────────────────── */
+const LightC = {
   bg:        "#F0F4FA",
   surface:   "#FFFFFF",
   border:    "#DDE6F5",
@@ -30,6 +31,31 @@ const C = {
   warn:      "#B45309",
   danger:    "#B91C1C",
   seg: ["#1554B0","#2279D9","#48A3F5","#0891B2","#0B2A5C","#A8CEFF","#64748B"],
+};
+
+const DarkC = {
+  bg:        "#040810",
+  surface:   "#0A0F1A",
+  border:    "#1A2234",
+  borderMid: "#232F4A",
+  navy:      "#E2E8F0",
+  blue1:     "#60A5FA",
+  blue2:     "#3B82F6",
+  blue3:     "#2563EB",
+  blue4:     "#1D4ED8",
+  blue5:     "#172554",
+  teal:      "#2DD4BF",
+  tealLight: "#134E4A",
+  slate:     "#94A3B8",
+  slateL:    "#64748B",
+  text:      "#F1F5F9",
+  textMid:   "#CBD5E1",
+  textLight: "#94A3B8",
+  white:     "#0A0F1A",
+  success:   "#34D399",
+  warn:      "#FBBF24",
+  danger:    "#F87171",
+  seg: ["#60A5FA","#3B82F6","#2563EB","#2DD4BF","#E2E8F0","#1D4ED8","#94A3B8"],
 };
 
 /* ── DATA ────────────────────────────────────────── */
@@ -60,11 +86,11 @@ const products = [
 ];
 
 const endUsers = [
-  { name:"Govt Hospitals",           value:38, color:C.blue1 },
-  { name:"Private Hospitals",        value:29, color:C.blue2 },
-  { name:"Clinics & Nursing Homes",  value:16, color:C.blue3 },
-  { name:"Diagnostic Centers",       value:10, color:C.teal  },
-  { name:"Ambulatory Centers",       value: 7, color:C.blue4 },
+  { name:"Govt Hospitals",           value:38, color:"#1554B0" },
+  { name:"Private Hospitals",        value:29, color:"#2279D9" },
+  { name:"Clinics & Nursing Homes",  value:16, color:"#48A3F5" },
+  { name:"Diagnostic Centers",       value:10, color:"#0891B2"  },
+  { name:"Ambulatory Centers",       value: 7, color:"#A8CEFF" },
 ];
 
 const regions = [
@@ -143,142 +169,139 @@ const caseStudies = [
 
 const TABS = ["Market Overview", "Product Segments", "End-User Analysis", "Competitive Landscape", "Supply & Pricing", "Trends & Forecast", "Strategic Studies"];
 
-/* ── HELPERS ─────────────────────────────────────── */
-const CustomTT = ({ active, payload, label }) => {
-  if (!active || !payload?.length) return null;
-  return (
-    <div style={{ background:C.white, border:`1.5px solid ${C.border}`, borderRadius:10, padding:"10px 14px", boxShadow:"0 4px 20px rgba(11,42,92,0.12)", fontSize:12 }}>
-      <div style={{ fontWeight:700, color:C.navy, marginBottom:5, fontSize:11, letterSpacing:"0.04em" }}>{label}</div>
-      {payload.map((p,i)=>(
-        <div key={i} style={{ color:p.color||C.blue1, margin:"2px 0", fontSize:11 }}>
-          {p.name}: <strong>{p.value}</strong>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const Tag = ({ children, color=C.blue1 }) => (
-  <span style={{ background:`${color}14`, color, border:`1px solid ${color}30`, borderRadius:20, padding:"2px 10px", fontSize:10, fontWeight:700, letterSpacing:"0.05em" }}>
-    {children}
-  </span>
-);
-
-const Divider = () => <div style={{ height:1, background:C.border, margin:"0 0 18px" }} />;
-
-/* ── CARD ────────────────────────────────────────── */
-const Card = ({ children, style={}, accent }) => (
-  <div style={{
-    background: C.white,
-    border: `1.5px solid ${C.border}`,
-    borderRadius: 16,
-    padding: "22px 24px",
-    boxShadow: "0 2px 12px rgba(11,42,92,0.06)",
-    borderTop: accent ? `3px solid ${accent}` : `1.5px solid ${C.border}`,
-    ...style
-  }}>{children}</div>
-);
-
-const CardTitle = ({ children, sub }) => (
-  <div style={{ marginBottom:sub?4:16 }}>
-    <div style={{ fontSize:13, fontWeight:800, color:C.navy, letterSpacing:"0.01em" }}>{children}</div>
-    {sub && <div style={{ fontSize:10, color:C.slateL, marginTop:2, marginBottom:14, letterSpacing:"0.04em", textTransform:"uppercase" }}>{sub}</div>}
-  </div>
-);
-
-const KPICard = ({ icon, label, value, delta, deltaPos=true, accent=C.blue1 }) => (
-  <div style={{
-    background: C.white,
-    border: `1.5px solid ${C.border}`,
-    borderRadius:14,
-    padding:"18px 20px",
-    boxShadow:"0 2px 10px rgba(11,42,92,0.05)",
-    borderLeft:`4px solid ${accent}`,
-    display:"flex", flexDirection:"column", gap:4,
-  }}>
-    <div style={{ fontSize:20 }}>{icon}</div>
-    <div style={{ fontSize:22, fontWeight:900, color:C.navy, letterSpacing:"-0.03em", lineHeight:1 }}>{value}</div>
-    <div style={{ fontSize:11, color:C.textLight, marginTop:1 }}>{label}</div>
-    {delta && (
-      <div style={{ marginTop:4, display:"inline-flex", alignItems:"center", gap:4 }}>
-        <span style={{ fontSize:10, fontWeight:700, color:deltaPos?C.success:C.danger, background:deltaPos?"#ECFDF5":"#FEF2F2", padding:"2px 8px", borderRadius:20 }}>
-          {deltaPos?"▲":"▼"} {delta}
-        </span>
-      </div>
-    )}
-  </div>
-);
-
-const ProgressRow = ({ label, pct, value, growth, color=C.blue2 }) => (
-  <div style={{ padding:"9px 0", borderBottom:`1px solid ${C.border}` }}>
-    <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
-      <span style={{ fontSize:11, color:C.textMid, fontWeight:600 }}>{label}</span>
-      <div style={{ display:"flex", gap:8, alignItems:"center" }}>
-        {value && <span style={{ fontSize:11, color:C.slate }}>{value}</span>}
-        {growth && <Tag color={C.teal}>+{growth}%</Tag>}
-        <span style={{ fontSize:11, fontWeight:800, color:C.navy }}>{pct}%</span>
-      </div>
-    </div>
-    <div style={{ height:6, borderRadius:4, background:C.blue5, overflow:"hidden" }}>
-      <div style={{ height:"100%", width:`${pct}%`, background:`linear-gradient(90deg,${color},${C.blue3})`, borderRadius:4, transition:"width 0.6s ease" }} />
-    </div>
-  </div>
-);
-
-const InsightBox = ({ text, color=C.blue1 }) => (
-  <div style={{ background:`${color}08`, border:`1px solid ${color}22`, borderLeft:`3px solid ${color}`, borderRadius:"0 8px 8px 0", padding:"10px 14px", marginTop:14, fontSize:11, color:C.textMid, lineHeight:1.7 }}>
-    {text}
-  </div>
-);
-
 /* ── MAIN ────────────────────────────────────────── */
 export default function Dashboard() {
   const [tab, setTab] = useState(TABS[0]);
+  const [isDark, setIsDark] = useState(false);
+  const C = isDark ? DarkC : LightC;
+
+  /* ── HELPERS (INSIDE TO ACCESS C) ────────────────── */
+  const CustomTT = ({ active, payload, label }) => {
+    if (!active || !payload?.length) return null;
+    return (
+      <div style={{ background: C.white, border: `1.5px solid ${C.border}`, borderRadius: 10, padding: "10px 14px", boxShadow: "0 4px 20px rgba(0,0,0,0.3)", fontSize: 13 }}>
+        <div style={{ fontWeight: 700, color: C.navy, marginBottom: 5, fontSize: 13 }}>{label}</div>
+        {payload.map((p, i) => (
+          <div key={i} style={{ color: p.color || C.blue1, margin: "2px 0", fontSize: 12 }}>
+            {p.name}: <strong>{p.value}</strong>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const Tag = ({ children, color = C.blue1 }) => (
+    <span style={{ background: `${color}14`, color, border: `1px solid ${color}30`, borderRadius: 20, padding: "3px 12px", fontSize: 13, fontWeight: 700, letterSpacing: "0.04em" }}>
+      {children}
+    </span>
+  );
+
+  const Card = ({ children, style = {}, accent }) => (
+    <div style={{
+      background: C.white,
+      border: `1.5px solid ${C.border}`,
+      borderRadius: 16,
+      padding: "22px 24px",
+      boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
+      borderTop: accent ? `3px solid ${accent}` : `1.5px solid ${C.border}`,
+      ...style
+    }}>{children}</div>
+  );
+
+  const CardTitle = ({ children, sub }) => (
+    <div style={{ marginBottom: sub ? 6 : 24 }}>
+      <div style={{ fontSize: 16, fontWeight: 900, color: C.navy, letterSpacing: "0.01em" }}>{children}</div>
+      {sub && <div style={{ fontSize: 12, color: C.slateL, marginTop: 4, marginBottom: 20, letterSpacing: "0.05em", textTransform: "uppercase", fontWeight: 700 }}>{sub}</div>}
+    </div>
+  );
+
+  const KPICard = ({ icon, label, value, delta, deltaPos = true, accent = C.blue1 }) => (
+    <div style={{
+      background: C.white,
+      border: `1.5px solid ${C.border}`,
+      borderRadius: 14,
+      padding: "20px 24px",
+      boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+      borderLeft: `4px solid ${accent}`,
+      display: "flex", flexDirection: "column", gap: 6,
+    }}>
+      <div style={{ fontSize: 24 }}>{icon}</div>
+      <div style={{ fontSize: 23, fontWeight: 900, color: C.navy, letterSpacing: "-0.03em", lineHeight: 1 }}>{value}</div>
+      <div style={{ fontSize: 13, color: C.textLight, marginTop: 1, fontWeight: 700 }}>{label}</div>
+      {delta && (
+        <div style={{ marginTop: 4, display: "inline-flex", alignItems: "center", gap: 4 }}>
+          <span style={{ fontSize: 13, fontWeight: 800, color: deltaPos ? C.success : C.danger, background: deltaPos ? (isDark ? "#064E3B" : "#ECFDF5") : (isDark ? "#7F1D1D" : "#FEF2F2"), padding: "4px 12px", borderRadius: 20 }}>
+            {deltaPos ? "▲" : "▼"} {delta}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+
+  const ProgressRow = ({ label, pct, value, growth, color = C.blue2 }) => (
+    <div style={{ padding: "12px 0", borderBottom: `1px solid ${C.border}` }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
+        <span style={{ fontSize: 14, color: C.textMid, fontWeight: 750 }}>{label}</span>
+        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          {value && <span style={{ fontSize: 13, color: C.slate, fontWeight: 500 }}>{value}</span>}
+          {growth && <Tag color={C.teal}>+{growth}%</Tag>}
+          <span style={{ fontSize: 14, fontWeight: 900, color: C.navy }}>{pct}%</span>
+        </div>
+      </div>
+      <div style={{ height: 6, borderRadius: 4, background: C.border, overflow: "hidden" }}>
+        <div style={{ height: "100%", width: `${pct}%`, background: isDark ? color : `linear-gradient(90deg,${color},${C.blue3})`, borderRadius: 4, transition: "width 0.6s ease" }} />
+      </div>
+    </div>
+  );
+
+  const InsightBox = ({ text, color = C.blue1 }) => (
+    <div style={{ background: isDark ? `${color}15` : `${color}08`, border: `1.5px solid ${color}22`, borderLeft: `5px solid ${color}`, borderRadius: "0 8px 8px 0", padding: "14px 20px", marginTop: 20, fontSize: 14, color: C.textMid, lineHeight: 1.7, fontWeight: 500 }}>
+      {text}
+    </div>
+  );
 
   return (
     <div style={{ background:C.bg, minHeight:"100vh", fontFamily:"'Outfit','Segoe UI',sans-serif", color:C.text }}>
 
       {/* ── HEADER ── */}
-      <div style={{ background:C.white, borderBottom:`1.5px solid ${C.border}`, position:"sticky", top:0, zIndex:100, boxShadow:"0 2px 16px rgba(11,42,92,0.07)" }}>
-        <div style={{ maxWidth:1320, margin:"0 auto", padding:"0 28px" }}>
-          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"14px 0" }}>
+      <div style={{ background: C.white, borderBottom: `1.5px solid ${C.border}`, position: "sticky", top: 0, zIndex: 100, transition: "all 0.3s ease" }}>
+        <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 28px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 0" }}>
             {/* Logo area */}
-            <div style={{ display:"flex", alignItems:"center", gap:14 }}>
-              <div style={{ width:40, height:40, borderRadius:10, background:`linear-gradient(135deg,${C.blue1},${C.blue3})`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, boxShadow:`0 4px 12px ${C.blue1}40` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <div style={{ width: 48, height: 48, borderRadius: 12, background: isDark ? C.blue1 : `linear-gradient(135deg,${C.blue1},${C.blue3})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, boxShadow: `0 4px 12px ${C.blue1}40` }}>
                 🏥
               </div>
               <div>
-                <div style={{ fontSize:15, fontWeight:900, color:C.navy, letterSpacing:"0.02em" }}>HOSPITAL DISPOSABLES</div>
-                <div style={{ fontSize:9, color:C.slateL, letterSpacing:"0.14em", textTransform:"uppercase", marginTop:1 }}>Market Intelligence · Global & India · 2024–2030</div>
+                <div style={{ fontSize: 22, fontWeight: 900, color: C.navy, letterSpacing: "-0.01em" }}>HOSPITAL DISPOSABLES</div>
+                <div style={{ fontSize: 13, color: C.slateL, letterSpacing: "0.06em", textTransform: "uppercase", marginTop: 2, fontWeight: 700 }}>Market Intelligence · Forecast Report · 2024–30</div>
               </div>
             </div>
-            {/* Badges */}
-            <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-              {[
-                { icon:"📊", label:"Secondary Research" },
-                { icon:"🌐", label:"WHO / MoHFW Data" },
-                { icon:"📈", label:"CAGR: 9.1% Global" },
-                { icon:"🇮🇳", label:"India: 10.8% CAGR" },
-              ].map((b,i)=>(
-                <div key={i} style={{ display:"flex", alignItems:"center", gap:5, background:C.blue5, border:`1px solid ${C.blue4}`, borderRadius:20, padding:"4px 12px", fontSize:10, color:C.blue1, fontWeight:600 }}>
-                  <span>{b.icon}</span><span>{b.label}</span>
-                </div>
-              ))}
-            </div>
+            {/* Theme Toggle */}
+            <button
+              onClick={() => setIsDark(!isDark)}
+              style={{
+                background: isDark ? C.border : C.bg, border: `1.2px solid ${C.borderMid}`, borderRadius: 20, padding: "8px 20px", fontSize: 13,
+                color: C.navy, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, transition: "all 0.2s"
+              }}
+            >
+              {isDark ? "☀️ Light Mode" : "🌙 Dark Mode"}
+            </button>
           </div>
 
-          {/* TABS */}
-          <div style={{ display:"flex", gap:0, overflowX:"auto", borderTop:`1px solid ${C.border}` }}>
-            {TABS.map(t=>{
-              const active = tab===t;
+          {/* TABS (No Scrollbar) */}
+          <div className="no-scrollbar" style={{ display: "flex", gap: 0, overflowX: "auto", borderTop: `1px solid ${C.border}`, scrollbarWidth: "none", msOverflowStyle: "none" }}>
+            <style>{`.no-scrollbar::-webkit-scrollbar { display: none; }`}</style>
+            {TABS.map(t => {
+              const active = tab === t;
               return (
-                <button key={t} onClick={()=>setTab(t)} style={{
-                  padding:"11px 18px", fontSize:11, fontWeight:active?700:500,
-                  color:active?C.blue1:C.slate,
-                  background:"transparent", border:"none", cursor:"pointer",
-                  borderBottom:active?`2.5px solid ${C.blue1}`:"2.5px solid transparent",
-                  whiteSpace:"nowrap", letterSpacing:"0.03em",
-                  transition:"all 0.15s",
+                <button key={t} onClick={() => setTab(t)} style={{
+                  padding: "18px 24px", fontSize: 13, fontWeight: active ? 900 : 500,
+                  color: active ? C.blue1 : C.slate,
+                  background: "transparent", border: "none", cursor: "pointer",
+                  borderBottom: active ? `3px solid ${C.blue1}` : "3px solid transparent",
+                  whiteSpace: "nowrap", letterSpacing: "0.03em", textTransform: "uppercase",
+                  transition: "all 0.15s",
                 }}>{t}</button>
               );
             })}
@@ -364,6 +387,23 @@ export default function Dashboard() {
               <InsightBox text="💡 Government hospitals command 38% of total demand, making public-sector tender cycles the single most important procurement channel in India." color={C.blue1}/>
             </Card>
           </div>
+
+          {/* QUICK-NAV REPORT CONTENTS */}
+          <Card style={{ marginTop: 20 }}>
+            <CardTitle sub="Direct access to in-depth research modules">📖 Strategic Report Contents & Navigation</CardTitle>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
+              {TABS.slice(1).map((t, i) => (
+                <button key={i} onClick={() => setTab(t)} style={{
+                  textAlign: "left", padding: "20px 24px", borderRadius: 12, border: `1.5px solid ${C.borderMid}`,
+                  background: isDark ? C.border : C.bg, color: C.navy, cursor: "pointer", transition: "all 0.23s ease",
+                  display: "flex", flexDirection: "column", gap: 8, boxShadow: "0 2px 8px rgba(0,0,0,0.04)"
+                }}>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: C.blue1, textTransform: "uppercase", letterSpacing: "0.02em" }}>{t}</div>
+                  <div style={{ fontSize: 14, color: C.slate, lineHeight: 1.5, fontWeight: 500 }}>Dive into detailed analytics and forecast models for this sector →</div>
+                </button>
+              ))}
+            </div>
+          </Card>
         </>)}
 
         {/* ════════════════ PRODUCT SEGMENTS ════════════════ */}
@@ -379,8 +419,8 @@ export default function Dashboard() {
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={products} layout="vertical" barCategoryGap="25%">
                   <CartesianGrid strokeDasharray="4 4" stroke={C.border} horizontal={false}/>
-                  <XAxis type="number" tick={{ fill:C.slateL, fontSize:10 }} axisLine={false} tickLine={false}/>
-                  <YAxis type="category" dataKey="name" width={115} tick={{ fill:C.textMid, fontSize:10 }} axisLine={false} tickLine={false}/>
+                  <XAxis type="number" tick={{ fill:C.slateL, fontSize: 13 }} axisLine={false} tickLine={false}/>
+                  <YAxis type="category" dataKey="name" width={115} tick={{ fill:C.textMid, fontSize: 13 }} axisLine={false} tickLine={false}/>
                   <Tooltip content={<CustomTT/>}/>
                   <Bar dataKey="size" name="Market Size ($M)" radius={[0,6,6,0]}>
                     {products.map((p,i)=><Cell key={i} fill={C.seg[i%C.seg.length]}/>)}
@@ -393,8 +433,8 @@ export default function Dashboard() {
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={products} barCategoryGap="30%">
                   <CartesianGrid strokeDasharray="4 4" stroke={C.border}/>
-                  <XAxis dataKey="name" tick={{ fill:C.slateL, fontSize:8 }} axisLine={false} tickLine={false} angle={-30} textAnchor="end" height={52}/>
-                  <YAxis tick={{ fill:C.slateL, fontSize:10 }} axisLine={false} tickLine={false} domain={[5,13]}/>
+                  <XAxis dataKey="name" tick={{ fill:C.slateL, fontSize: 12 }} axisLine={false} tickLine={false} angle={-30} textAnchor="end" height={52}/>
+                  <YAxis tick={{ fill:C.slateL, fontSize: 13 }} axisLine={false} tickLine={false} domain={[5,13]}/>
                   <Tooltip content={<CustomTT/>}/>
                   <Bar dataKey="cagr" name="CAGR %" radius={[4,4,0,0]}>
                     {products.map((p,i)=><Cell key={i} fill={C.seg[i%C.seg.length]}/>)}
@@ -412,9 +452,9 @@ export default function Dashboard() {
                 { icon:"🥼", color:C.teal,  title:"Surgical Gowns — AAMI Level 3", text:"Non-woven SMS fabric replacing traditional cotton in tier-1 hospitals. Fluid-resistant Level-3 gowns gaining share in high-risk surgical departments." },
                 { icon:"🇮🇳", color:C.navy, title:"India PLI Export Push",       text:"India PPE export crossed $1.2B in 2023, targeting $5B by 2026 under Production Linked Incentive scheme. ISO 13485 adoption up 48% among mid-tier manufacturers." },
               ].map((c,i)=>(
-                <div key={i} style={{ background:C.bg, border:`1.5px solid ${C.border}`, borderLeft:`4px solid ${c.color}`, borderRadius:"0 10px 10px 0", padding:"14px 16px" }}>
-                  <div style={{ fontSize:13, fontWeight:700, color:C.navy, marginBottom:6 }}>{c.icon} {c.title}</div>
-                  <div style={{ fontSize:11, color:C.textLight, lineHeight:1.7 }}>{c.text}</div>
+                <div key={i} style={{ background:C.bg, border:`1.5px solid ${C.border}`, borderLeft:`4px solid ${c.color}`, borderRadius:"0 10px 10px 0", padding:"18px 22px" }}>
+                  <div style={{ fontSize:15, fontWeight:850, color:C.navy, marginBottom:10 }}>{c.icon} {c.title}</div>
+                  <div style={{ fontSize:15, color:C.textLight, lineHeight:1.7, fontWeight: 500 }}>{c.text}</div>
                 </div>
               ))}
             </div>
@@ -459,12 +499,12 @@ export default function Dashboard() {
                 { icon:"💰", color:C.teal,  label:"Avg Tender Size", val:"₹28.4L", note:"Govt hospital annual PPE tender value" },
                 { icon:"📦", color:C.navy,  label:"Annual Units/Bed", val:"~1,200", note:"Average disposable units consumed per hospital bed" },
               ].map((m,i)=>(
-                <div key={i} style={{ padding:"10px 0", borderBottom:`1px solid ${C.border}` }}>
+                <div key={i} style={{ padding:"12px 0", borderBottom:`1px solid ${C.border}` }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                    <span style={{ fontSize:11, color:C.textMid }}>{m.icon} {m.label}</span>
-                    <span style={{ fontSize:13, fontWeight:800, color:m.color }}>{m.val}</span>
+                    <span style={{ fontSize:14, color:C.textMid, fontWeight: 700 }}>{m.icon} {m.label}</span>
+                    <span style={{ fontSize:15, fontWeight:850, color:m.color }}>{m.val}</span>
                   </div>
-                  <div style={{ fontSize:10, color:C.slateL, marginTop:3 }}>{m.note}</div>
+                  <div style={{ fontSize:14, color:C.slateL, marginTop:4, fontWeight: 600 }}>{m.note}</div>
                 </div>
               ))}
             </Card>
@@ -507,13 +547,13 @@ export default function Dashboard() {
                 { name:"Ansell (AUS)",          rev:"$1.7B",     focus:"Surgical & exam gloves",                  strength:"Latex-free innovation" },
                 { name:"India Manufacturers",   rev:"$1.2B exp", focus:"Cost-competitive PPE, export focus",      strength:"PLI support, price advantage" },
               ].map((p,i)=>(
-                <div key={i} style={{ padding:"9px 0", borderBottom:`1px solid ${C.border}` }}>
+                <div key={i} style={{ padding:"14px 0", borderBottom:`1px solid ${C.border}` }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                    <span style={{ fontSize:11, fontWeight:700, color:C.navy }}>{p.name}</span>
+                    <span style={{ fontSize:15, fontWeight:850, color:C.navy }}>{p.name}</span>
                     <Tag color={C.blue2}>{p.rev}</Tag>
                   </div>
-                  <div style={{ fontSize:10, color:C.textLight, marginTop:3 }}>{p.focus}</div>
-                  <div style={{ fontSize:9, color:C.slateL, marginTop:2 }}>Strength: {p.strength}</div>
+                  <div style={{ fontSize:14, color:C.textLight, marginTop:4, fontWeight: 500 }}>{p.focus}</div>
+                  <div style={{ fontSize:13, color:C.slateL, marginTop:3, fontWeight: 600 }}>Strength: {p.strength}</div>
                 </div>
               ))}
             </Card>
@@ -528,8 +568,8 @@ export default function Dashboard() {
               ].map((t,i)=>(
                 <div key={i} style={{ background:C.bg, border:`1.5px solid ${C.borderMid}`, borderTop:`3px solid ${t.color}`, borderRadius:12, padding:"16px 18px" }}>
                   <div style={{ fontSize:32, fontWeight:900, color:t.color, letterSpacing:"-0.03em" }}>{t.pct}%</div>
-                  <div style={{ fontSize:12, fontWeight:700, color:C.navy, margin:"4px 0" }}>{t.label}</div>
-                  <div style={{ fontSize:10, color:C.textLight, lineHeight:1.6 }}>{t.sub}</div>
+                  <div style={{ fontSize:13, fontWeight:700, color:C.navy, margin:"4px 0" }}>{t.label}</div>
+                  <div style={{ fontSize:13, color:C.textLight, lineHeight:1.6, fontWeight: 500 }}>{t.sub}</div>
                 </div>
               ))}
             </div>
@@ -549,8 +589,8 @@ export default function Dashboard() {
             <ResponsiveContainer width="100%" height={230}>
               <LineChart data={rawMat}>
                 <CartesianGrid strokeDasharray="4 4" stroke={C.border}/>
-                <XAxis dataKey="month" tick={{ fill:C.slateL, fontSize:10 }} axisLine={false} tickLine={false}/>
-                <YAxis tick={{ fill:C.slateL, fontSize:10 }} axisLine={false} tickLine={false} domain={[90,135]}/>
+                <XAxis dataKey="month" tick={{ fill:C.slateL, fontSize: 13 }} axisLine={false} tickLine={false}/>
+                <YAxis tick={{ fill:C.slateL, fontSize: 13 }} axisLine={false} tickLine={false} domain={[90,135]}/>
                 <Tooltip content={<CustomTT/>}/>
                 <Legend wrapperStyle={{ fontSize:11, color:C.slate }}/>
                 <Line type="monotone" dataKey="nitrile" name="Nitrile (Gloves)" stroke={C.blue1} strokeWidth={2.5} dot={{ r:3, fill:C.blue1 }}/>
@@ -568,12 +608,12 @@ export default function Dashboard() {
                 { risk:"Red Sea Shipping Disruptions",        impact:"MEDIUM", color:C.warn,   detail:"+18–22 days avg lead time. Freight cost up 38% YoY to India." },
                 { risk:"Domestic Latex Shortage (India)",     impact:"LOW",    color:C.teal,   detail:"Kerala output stabilising; transition to synthetics underway." },
               ].map((r,i)=>(
-                <div key={i} style={{ padding:"10px 0", borderBottom:`1px solid ${C.border}` }}>
-                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                    <span style={{ fontSize:11, fontWeight:600, color:C.navy }}>{r.risk}</span>
-                    <span style={{ fontSize:9, fontWeight:700, color:r.color, background:`${r.color}12`, padding:"2px 9px", borderRadius:20, border:`1px solid ${r.color}30` }}>{r.impact}</span>
+                <div key={i} style={{ padding:"14px 0", borderBottom:`1px solid ${C.border}` }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
+                    <span style={{ fontSize:15, fontWeight:850, color:C.navy }}>{r.risk}</span>
+                    <span style={{ fontSize:13, fontWeight:800, color:r.color, background:`${r.color}12`, padding:"3px 12px", borderRadius:4, border:`1px solid ${r.color}30` }}>{r.impact}</span>
                   </div>
-                  <div style={{ fontSize:10, color:C.textLight, marginTop:4, lineHeight:1.5 }}>{r.detail}</div>
+                  <div style={{ fontSize:14, color:C.textLight, lineHeight:1.5, fontWeight: 500 }}>{r.detail}</div>
                 </div>
               ))}
             </Card>
@@ -587,11 +627,11 @@ export default function Dashboard() {
                 { product:"PP Shoe Cover (100 pc)",        low:"₹90",  high:"₹140", trend:"→" },
                 { product:"Bouffant Surgical Cap (100 pc)",low:"₹65",  high:"₹110", trend:"→" },
               ].map((p,i)=>(
-                <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 0", borderBottom:`1px solid ${C.border}` }}>
-                  <span style={{ fontSize:11, color:C.textMid }}>{p.product}</span>
-                  <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-                    <span style={{ fontSize:11, color:C.slate }}>{p.low} – {p.high}</span>
-                    <span style={{ fontSize:14, color:p.trend==="↑"?C.danger:C.teal, fontWeight:700 }}>{p.trend}</span>
+                <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 0", borderBottom:`1px solid ${C.border}` }}>
+                  <span style={{ fontSize:15, color:C.textMid, fontWeight: 600 }}>{p.product}</span>
+                  <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                    <span style={{ fontSize:14, color:C.slate, fontWeight: 500 }}>{p.low} – {p.high}</span>
+                    <span style={{ fontSize:17, color:p.trend==="↑"?C.danger:C.teal, fontWeight:800 }}>{p.trend}</span>
                   </div>
                 </div>
               ))}
@@ -607,12 +647,12 @@ export default function Dashboard() {
             {trends.map((t, i) => {
               const color = t.momentum > 80 ? C.blue1 : t.momentum > 65 ? C.blue2 : C.blue3;
               return (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: 16, padding: "11px 0", borderBottom: `1px solid ${C.border}` }}>
-                  <div style={{ flex: 1, fontSize: 11, color: C.navy, fontWeight: 600 }}>{t.name}</div>
-                  <div style={{ width: 200, height: 7, borderRadius: 4, background: C.blue5, overflow: "hidden" }}>
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 16, padding: "14px 0", borderBottom: `1px solid ${C.border}` }}>
+                  <div style={{ flex: 1, fontSize: 13, color: C.navy, fontWeight: 800 }}>{t.name}</div>
+                  <div style={{ width: 220, height: 7, borderRadius: 4, background: C.blue5, overflow: "hidden" }}>
                     <div style={{ height: "100%", width: `${t.momentum}%`, background: `linear-gradient(90deg,${color},${C.blue3})`, borderRadius: 4 }} />
                   </div>
-                  <div style={{ fontSize: 11, fontWeight: 800, color, width: 28, textAlign: "right" }}>{t.momentum}</div>
+                  <div style={{ fontSize: 13, fontWeight: 900, color, width: 28, textAlign: "right" }}>{t.momentum}</div>
                   <Tag color={C.slate}>{t.horizon}</Tag>
                 </div>
               );
@@ -649,9 +689,9 @@ export default function Dashboard() {
                 { label: "New Hospital Beds (Ayushman)", value: "150,000", color: C.blue3 },
                 { label: "ISO-certified Indian PPE Firms", value: "2,800+", color: C.slate },
               ].map((m, i) => (
-                <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: `1px solid ${C.border}` }}>
-                  <span style={{ fontSize: 11, color: C.textLight }}>{m.label}</span>
-                  <span style={{ fontSize: 13, fontWeight: 900, color: m.color }}>{m.value}</span>
+                <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: `1px solid ${C.border}` }}>
+                  <span style={{ fontSize: 13, color: C.textLight, fontWeight: 600 }}>{m.label}</span>
+                  <span style={{ fontSize: 15, fontWeight: 900, color: m.color }}>{m.value}</span>
                 </div>
               ))}
               <InsightBox text="💡 Regulatory Compliance is the #1 demand driver (score 91/100) — CDSCO amendments now mandate ISO 10282 for all hospital glove procurement above ₹5L." color={C.teal} />
@@ -667,8 +707,8 @@ export default function Dashboard() {
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart data={healthcareShift} barGap={12}>
                   <CartesianGrid strokeDasharray="4 4" stroke={C.border} vertical={false} />
-                  <XAxis dataKey="segment" tick={{ fill: C.textMid, fontSize: 10 }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: C.slateL, fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <XAxis dataKey="segment" tick={{ fill: C.textMid, fontSize: 12 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: C.slateL, fontSize: 13 }} axisLine={false} tickLine={false} />
                   <Tooltip content={<CustomTT />} />
                   <Legend wrapperStyle={{ fontSize: 11 }} />
                   <Bar dataKey="share2024" name="Market Share 2024 (%)" fill={C.blue4} radius={[4, 4, 0, 0]} />
@@ -681,10 +721,10 @@ export default function Dashboard() {
             <Card>
               <CardTitle sub="ESG adoption milestones in medical manufacturing">🌿 Sustainability & Eco-Material Adoption</CardTitle>
               {sustainabilityData.map((s, i) => (
-                <div key={i} style={{ marginBottom: 14 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 5 }}>
-                    <span style={{ fontWeight: 600, color: C.navy }}>{s.category}</span>
-                    <span style={{ color: C.teal, fontWeight: 700 }}>{s.current}% → {s.target}% Target</span>
+                <div key={i} style={{ marginBottom: 16 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, marginBottom: 6 }}>
+                    <span style={{ fontWeight: 700, color: C.navy }}>{s.category}</span>
+                    <span style={{ color: C.teal, fontWeight: 800 }}>{s.current}% → {s.target}% Target</span>
                   </div>
                   <div style={{ height: 6, background: C.blue5, borderRadius: 3, position: "relative" }}>
                     <div style={{ position: "absolute", height: "100%", width: `${s.current}%`, background: C.teal, borderRadius: 3 }} />
@@ -706,7 +746,7 @@ export default function Dashboard() {
                     <span style={{ fontSize: 14, fontWeight: 900, color: C.success }}>{cs.stat}</span>
                   </div>
                   <div style={{ fontSize: 13, fontWeight: 800, color: C.navy, marginBottom: 8 }}>{cs.title}</div>
-                  <div style={{ fontSize: 11, color: C.textMid, lineHeight: 1.6 }}>{cs.details}</div>
+                  <div style={{ fontSize: 14, color: C.textMid, lineHeight: 1.6, fontWeight: 500 }}>{cs.details}</div>
                 </div>
               ))}
             </div>
@@ -720,10 +760,10 @@ export default function Dashboard() {
                 { label: "Procurement Efficiency Gain", val: "+28%", color: C.blue2, note: "Pre-sterilized procedure kits" },
                 { label: "Med-Waste Impact Reduction", val: "300k+ Tons", color: C.teal, note: "Est. annual waste saved by 2030" },
               ].map((m, i) => (
-                <div key={i} style={{ textAlign: "center", padding: "10px 0" }}>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: m.color }}>{m.val}</div>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: C.navy, marginTop: 4 }}>{m.label}</div>
-                  <div style={{ fontSize: 9, color: C.slateL }}>{m.note}</div>
+                <div key={i} style={{ textAlign: "center", padding: "12px 0" }}>
+                  <div style={{ fontSize: 26, fontWeight: 900, color: m.color }}>{m.val}</div>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: C.navy, marginTop: 4 }}>{m.label}</div>
+                  <div style={{ fontSize: 12, color: C.slateL, fontWeight: 500 }}>{m.note}</div>
                 </div>
               ))}
             </div>
@@ -733,9 +773,9 @@ export default function Dashboard() {
       </div>
 
       {/* FOOTER */}
-      <div style={{ borderTop:`1.5px solid ${C.border}`, background:C.white, marginTop:30, padding:"14px 28px", textAlign:"center", fontSize:10, color:C.slateL, letterSpacing:"0.06em" }}>
+      <div style={{ borderTop:`1.5px solid ${C.border}`, background:isDark ? C.surface : C.white, marginTop:30, padding:"30px 28px", textAlign:"center", fontSize:13, color:C.slateL, letterSpacing:"0.04em", fontWeight: 600 }}>
         DATA SOURCES: WHO · GRAND VIEW RESEARCH · MORDOR INTELLIGENCE · IBEF · ICIS · BLOOMBERG COMMODITIES · CDSCO · MoHFW · GeM PORTAL · HITES (HLL LIFECARE)
-        &nbsp;·&nbsp; FOR MARKET RESEARCH USE ONLY
+        <br/><span style={{ opacity: 0.6, fontSize: 11 }}>FOR MARKET RESEARCH USE ONLY</span>
       </div>
     </div>
   );
