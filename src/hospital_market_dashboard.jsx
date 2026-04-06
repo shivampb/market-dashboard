@@ -105,15 +105,43 @@ const drivers = [
 ];
 
 const trends = [
-  { name:"Biodegradable PPE",           momentum:72, horizon:"2025–27" },
-  { name:"Latex-Free Alternatives",     momentum:88, horizon:"Ongoing" },
-  { name:"Anti-microbial Coatings",     momentum:65, horizon:"2026–28" },
-  { name:"Smart PPE (IoT)",             momentum:41, horizon:"2027+"   },
-  { name:"India PLI Export Push",       momentum:84, horizon:"2024–26" },
-  { name:"Centralised Govt Procurement",momentum:79, horizon:"2024–25" },
+  { name: "Biodegradable PPE", momentum: 72, horizon: "2025–27" },
+  { name: "Latex-Free Alternatives", momentum: 88, horizon: "Ongoing" },
+  { name: "Anti-microbial Coatings", momentum: 65, horizon: "2026–28" },
+  { name: "Smart PPE (IoT)", momentum: 41, horizon: "2027+" },
+  { name: "India PLI Export Push", momentum: 84, horizon: "2024–26" },
+  { name: "Centralised Govt Procurement", momentum: 79, horizon: "2024–25" },
 ];
 
-const TABS = ["Market Overview","Product Segments","End-User Analysis","Competitive Landscape","Supply & Pricing","Trends & Forecast"];
+const sustainabilityData = [
+  { category: "Recyclable Non-wovens", current: 14, target: 45 },
+  { category: "Biodegradable Bioplastics", current: 8, target: 35 },
+  { category: "Water-less Sterilization", current: 22, target: 40 },
+  { category: "Carbon-Neutral Logistics", current: 5, target: 20 },
+];
+
+const healthcareShift = [
+  { segment: "Traditional In-patient", share2024: 68, share2030: 45 },
+  { segment: "Outpatient / Day Surgery", share2024: 22, share2030: 38 },
+  { segment: "Home-based Care / Diagnostics", share2024: 10, share2030: 17 },
+];
+
+const caseStudies = [
+  {
+    title: "Localization: Plasti Surge Industries (PSI)",
+    impact: "Import Reduction",
+    details: "Reduced diagnostic kit import dependency by 35% through localized procedure kit manufacturing for AIIMS & public health centers.",
+    stat: "40% Cost Save",
+  },
+  {
+    title: "Sustainability: The Bioplastic Pivot",
+    impact: "Waste Management",
+    details: "Pilot programs in 12 private Tier-1 hospitals show that biodegradable drapes reduce medical waste disposal costs by 18% annually.",
+    stat: "12+ Pilots Active",
+  },
+];
+
+const TABS = ["Market Overview", "Product Segments", "End-User Analysis", "Competitive Landscape", "Supply & Pricing", "Trends & Forecast", "Strategic Studies"];
 
 /* ── HELPERS ─────────────────────────────────────── */
 const CustomTT = ({ active, payload, label }) => {
@@ -573,62 +601,133 @@ export default function Dashboard() {
         </>)}
 
         {/* ════════════════ TRENDS & FORECAST ════════════════ */}
-        {tab==="Trends & Forecast" && (<>
-          <Card style={{ marginBottom:18 }}>
+        {tab === "Trends & Forecast" && (<>
+          <Card style={{ marginBottom: 18 }}>
             <CardTitle sub="Based on patent filings · regulatory activity · procurement pilots · investment flow">🚀 Emerging Market Trends — Momentum Score & Horizon</CardTitle>
-            {trends.map((t,i)=>{
-              const color = t.momentum>80?C.blue1:t.momentum>65?C.blue2:C.blue3;
+            {trends.map((t, i) => {
+              const color = t.momentum > 80 ? C.blue1 : t.momentum > 65 ? C.blue2 : C.blue3;
               return (
-                <div key={i} style={{ display:"flex", alignItems:"center", gap:16, padding:"11px 0", borderBottom:`1px solid ${C.border}` }}>
-                  <div style={{ flex:1, fontSize:11, color:C.navy, fontWeight:600 }}>{t.name}</div>
-                  <div style={{ width:200, height:7, borderRadius:4, background:C.blue5, overflow:"hidden" }}>
-                    <div style={{ height:"100%", width:`${t.momentum}%`, background:`linear-gradient(90deg,${color},${C.blue3})`, borderRadius:4 }}/>
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 16, padding: "11px 0", borderBottom: `1px solid ${C.border}` }}>
+                  <div style={{ flex: 1, fontSize: 11, color: C.navy, fontWeight: 600 }}>{t.name}</div>
+                  <div style={{ width: 200, height: 7, borderRadius: 4, background: C.blue5, overflow: "hidden" }}>
+                    <div style={{ height: "100%", width: `${t.momentum}%`, background: `linear-gradient(90deg,${color},${C.blue3})`, borderRadius: 4 }} />
                   </div>
-                  <div style={{ fontSize:11, fontWeight:800, color, width:28, textAlign:"right" }}>{t.momentum}</div>
+                  <div style={{ fontSize: 11, fontWeight: 800, color, width: 28, textAlign: "right" }}>{t.momentum}</div>
                   <Tag color={C.slate}>{t.horizon}</Tag>
                 </div>
               );
             })}
           </Card>
-          <div style={{ display:"grid", gridTemplateColumns:"3fr 2fr", gap:18 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: 18 }}>
             <Card>
               <CardTitle sub="India hospital disposables market · USD Billion · 2023–2030">📊 India Market Growth Forecast</CardTitle>
               <ResponsiveContainer width="100%" height={240}>
                 <AreaChart data={globalMarket.slice(4)}>
                   <defs>
                     <linearGradient id="fI" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={C.blue1} stopOpacity={0.2}/>
-                      <stop offset="100%" stopColor={C.blue1} stopOpacity={0}/>
+                      <stop offset="0%" stopColor={C.blue1} stopOpacity={0.2} />
+                      <stop offset="100%" stopColor={C.blue1} stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="4 4" stroke={C.border}/>
-                  <XAxis dataKey="year" tick={{ fill:C.slateL, fontSize:10 }} axisLine={false} tickLine={false}/>
-                  <YAxis tick={{ fill:C.slateL, fontSize:10 }} axisLine={false} tickLine={false}/>
-                  <Tooltip content={<CustomTT/>}/>
-                  <Area type="monotone" dataKey="india" name="India Market ($B)" stroke={C.blue1} strokeWidth={2.5} fill="url(#fI)"/>
-                  <Area type="monotone" dataKey="global" name="Global Market ($B)" stroke={C.blue3} strokeWidth={1.5} fill="none" strokeDasharray="5 3"/>
+                  <CartesianGrid strokeDasharray="4 4" stroke={C.border} />
+                  <XAxis dataKey="year" tick={{ fill: C.slateL, fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: C.slateL, fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <Tooltip content={<CustomTT />} />
+                  <Area type="monotone" dataKey="india" name="India Market ($B)" stroke={C.blue1} strokeWidth={2.5} fill="url(#fI)" />
+                  <Area type="monotone" dataKey="global" name="Global Market ($B)" stroke={C.blue3} strokeWidth={1.5} fill="none" strokeDasharray="5 3" />
                 </AreaChart>
               </ResponsiveContainer>
-              <InsightBox text="💡 India is on track to become the world's 2nd largest PPE exporter by 2028 — behind China — supported by PLI incentives and WHO-compliant manufacturing scale-up." color={C.blue1}/>
+              <InsightBox text="💡 India is on track to become the world's 2nd largest PPE exporter by 2028 — behind China — supported by PLI incentives and WHO-compliant manufacturing scale-up." color={C.blue1} />
             </Card>
             <Card>
               <CardTitle sub="Key projections for India hospital disposables sector">🔮 2030 Intelligence Summary</CardTitle>
               {[
-                { label:"India Market Size by 2030",      value:"$14.3B", color:C.blue1 },
-                { label:"Market CAGR 2024–2030",          value:"10.8%",  color:C.blue2 },
-                { label:"Projected PPE Export (India)",   value:"$5.0B",  color:C.teal  },
-                { label:"Surgical Volume by 2030",        value:"80M+/yr",color:C.navy  },
-                { label:"New Hospital Beds (Ayushman)",   value:"150,000",color:C.blue3 },
-                { label:"ISO-certified Indian PPE Firms", value:"2,800+", color:C.slate },
-              ].map((m,i)=>(
-                <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 0", borderBottom:`1px solid ${C.border}` }}>
-                  <span style={{ fontSize:11, color:C.textLight }}>{m.label}</span>
-                  <span style={{ fontSize:13, fontWeight:900, color:m.color }}>{m.value}</span>
+                { label: "India Market Size by 2030", value: "$14.3B", color: C.blue1 },
+                { label: "Market CAGR 2024–2030", value: "10.8%", color: C.blue2 },
+                { label: "Projected PPE Export (India)", value: "$5.0B", color: C.teal },
+                { label: "Surgical Volume by 2030", value: "80M+/yr", color: C.navy },
+                { label: "New Hospital Beds (Ayushman)", value: "150,000", color: C.blue3 },
+                { label: "ISO-certified Indian PPE Firms", value: "2,800+", color: C.slate },
+              ].map((m, i) => (
+                <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: `1px solid ${C.border}` }}>
+                  <span style={{ fontSize: 11, color: C.textLight }}>{m.label}</span>
+                  <span style={{ fontSize: 13, fontWeight: 900, color: m.color }}>{m.value}</span>
                 </div>
               ))}
-              <InsightBox text="💡 Regulatory Compliance is the #1 demand driver (score 91/100) — CDSCO amendments now mandate ISO 10282 for all hospital glove procurement above ₹5L." color={C.teal}/>
+              <InsightBox text="💡 Regulatory Compliance is the #1 demand driver (score 91/100) — CDSCO amendments now mandate ISO 10282 for all hospital glove procurement above ₹5L." color={C.teal} />
             </Card>
           </div>
+        </>)}
+
+        {/* ════════════════ STRATEGIC STUDIES ════════════════ */}
+        {tab === "Strategic Studies" && (<>
+          <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 18, marginBottom: 18 }}>
+            <Card>
+              <CardTitle sub="Shift from hospital to home-based diagnostic supplies">🔄 Care Delivery Model Transformation (2024–2030)</CardTitle>
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={healthcareShift} barGap={12}>
+                  <CartesianGrid strokeDasharray="4 4" stroke={C.border} vertical={false} />
+                  <XAxis dataKey="segment" tick={{ fill: C.textMid, fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: C.slateL, fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <Tooltip content={<CustomTT />} />
+                  <Legend wrapperStyle={{ fontSize: 11 }} />
+                  <Bar dataKey="share2024" name="Market Share 2024 (%)" fill={C.blue4} radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="share2030" name="Projected Share 2030 (%)" fill={C.blue1} radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+              <InsightBox text="💡 Home care and outpatient clinics are expected to absorb nearly 55% of total disposable volume by 2030, necessitating portable and patient-operable designs." />
+            </Card>
+
+            <Card>
+              <CardTitle sub="ESG adoption milestones in medical manufacturing">🌿 Sustainability & Eco-Material Adoption</CardTitle>
+              {sustainabilityData.map((s, i) => (
+                <div key={i} style={{ marginBottom: 14 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 5 }}>
+                    <span style={{ fontWeight: 600, color: C.navy }}>{s.category}</span>
+                    <span style={{ color: C.teal, fontWeight: 700 }}>{s.current}% → {s.target}% Target</span>
+                  </div>
+                  <div style={{ height: 6, background: C.blue5, borderRadius: 3, position: "relative" }}>
+                    <div style={{ position: "absolute", height: "100%", width: `${s.current}%`, background: C.teal, borderRadius: 3 }} />
+                    <div style={{ position: "absolute", height: "100%", width: `${s.target}%`, background: C.teal, opacity: 0.2, borderRadius: 3 }} />
+                  </div>
+                </div>
+              ))}
+              <InsightBox text="💡 Biodegradable medical supplies are moving from niche pilots to mandatory procurement requirements in EU and Tier-1 Indian facilities." color={C.teal} />
+            </Card>
+          </div>
+
+          <Card title="Industry Case Studies">
+            <CardTitle sub="Real-world success stories in the hospital disposables sector">📖 Strategic Case Study Showcase</CardTitle>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              {caseStudies.map((cs, i) => (
+                <div key={i} style={{ background: C.bg, padding: 20, borderRadius: 12, border: `1.2px solid ${C.borderMid}` }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
+                    <Tag color={C.blue1}>{cs.impact}</Tag>
+                    <span style={{ fontSize: 14, fontWeight: 900, color: C.success }}>{cs.stat}</span>
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 800, color: C.navy, marginBottom: 8 }}>{cs.title}</div>
+                  <div style={{ fontSize: 11, color: C.textMid, lineHeight: 1.6 }}>{cs.details}</div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card style={{ marginTop: 18 }}>
+            <CardTitle sub="Combatting Hospital-Acquired Infections (HAI)">🛡️ Infection Control & HAI Study Insights</CardTitle>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+              {[
+                { label: "HAI Reduction with Single-use Kit", val: "-42%", color: C.success, note: "Based on 3-year multi-site study" },
+                { label: "Procurement Efficiency Gain", val: "+28%", color: C.blue2, note: "Pre-sterilized procedure kits" },
+                { label: "Med-Waste Impact Reduction", val: "300k+ Tons", color: C.teal, note: "Est. annual waste saved by 2030" },
+              ].map((m, i) => (
+                <div key={i} style={{ textAlign: "center", padding: "10px 0" }}>
+                  <div style={{ fontSize: 24, fontWeight: 900, color: m.color }}>{m.val}</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: C.navy, marginTop: 4 }}>{m.label}</div>
+                  <div style={{ fontSize: 9, color: C.slateL }}>{m.note}</div>
+                </div>
+              ))}
+            </div>
+          </Card>
         </>)}
 
       </div>
